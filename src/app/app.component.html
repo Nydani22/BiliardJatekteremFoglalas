@@ -1,6 +1,6 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav>
-        <app-menu [sidepanel]="sidenav"></app-menu>
+        <app-menu [sidepanel]="sidenav" [isLoggedIn]="isLoggedIn" (logoutEvent)="logout()"></app-menu>
     </mat-sidenav>
     <mat-drawer-content>
         <mat-toolbar-row>
@@ -27,15 +27,25 @@
                             Profil
                         </button>
                     </li>
-                    <li>
-                        <button mat-fab extended routerLink="/login">
-                            <mat-icon>login</mat-icon>
-                            Bejelentkezés
-                        </button>
-                    </li>
+                    @if (isLoggedIn) {
+                        <li>
+                            <button mat-fab extended (click)="logout()">
+                                <mat-icon>logout</mat-icon>
+                                Kijelentkezés
+                            </button>
+                        </li>
+                    } @else {
+                        <li>
+                            <button mat-fab extended routerLink="/login">
+                                <mat-icon>login</mat-icon>
+                                Bejelentkezés
+                            </button>
+                        </li>
+                    }
+                    
                 </ul>
             </nav>
         </mat-toolbar-row>
+        <router-outlet/>
     </mat-drawer-content>
 </mat-sidenav-container>
-<router-outlet/>

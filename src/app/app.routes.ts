@@ -9,5 +9,6 @@ export const routes: Routes = [
     {path: 'foglalas', component: FoglalasComponent},
     {path: 'profil', component: ProfilComponent},
     {path: 'login', component: LoginComponent},
-    {path: '**', component: FooldalComponent}
+    {path: '', redirectTo: 'fooldal', pathMatch:"full" },
+    {path: '**', redirectTo: 'fooldal', pathMatch:"full" }
 ];

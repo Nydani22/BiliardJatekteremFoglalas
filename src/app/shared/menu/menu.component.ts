@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
@@ -17,6 +17,8 @@ import { MatSidenav } from '@angular/material/sidenav';
 export class MenuComponent implements OnInit, AfterViewInit {
 
   @Input() sidepanel!: MatSidenav;
+  @Input() isLoggedIn: boolean=false;
+  @Output() logoutEvent=new EventEmitter<void>();
 
 
 
@@ -29,5 +31,11 @@ export class MenuComponent implements OnInit, AfterViewInit {
     if (this.sidepanel) {
         this.sidepanel.close();
     }
+  }
+
+  logout() {
+    localStorage.setItem("isLoggedIn","false");
+    window.location.href="/fooldal";
+    this.closeMenu();
   }
 }

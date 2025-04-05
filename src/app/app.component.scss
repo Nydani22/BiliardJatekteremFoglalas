@@ -1,0 +1,40 @@
+.menu-toggle {
+    display: none;
+    margin: 5px;
+}
+
+nav {
+    width: 100%;
+}
+
+ul {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    padding: 5px;
+    margin: 0;
+}
+
+li {
+    text-decoration: none !important;
+    margin: 5px;
+}
+
+span {
+    cursor: pointer;
+    margin: 10px;
+}
+
+li:last-child {
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    nav ul {
+        display: none;
+    }
+}

@@ -1,1 +1,18 @@
-<p>menu works!</p>
+<mat-nav-list>
+    <a mat-list-item routerLink="/fooldal" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Főoldal</span>
+    </a>
+    <a mat-list-item routerLink="/foglalas" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>event_available</mat-icon>
+        <span matListItemTitle>Foglalás</span>
+    </a>
+    <a mat-list-item routerLink="/profil" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>person</mat-icon>
+        <span matListItemTitle>Profil</span>
+    </a>
+    <a mat-list-item routerLink="/login" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>login</mat-icon>
+        <span matListItemTitle>Bejelentkezés</span>
+    </a>
+</mat-nav-list>

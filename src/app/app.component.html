@@ -4,9 +4,11 @@
     </mat-sidenav>
     <mat-drawer-content>
         <mat-toolbar-row>
-            <button mat-fab (click)="toggle(sidenav)" class="menu-toggle">
-                <mat-icon>menu</mat-icon>
-            </button>
+            <div id="toggle">
+                <button mat-fab (click)="toggle(sidenav)" class="menu-toggle">
+                    <mat-icon>menu</mat-icon>
+                </button>
+            </div>
             <nav>
                 <ul>
                     <li>
@@ -42,7 +44,6 @@
                             </button>
                         </li>
                     }
-                    
                 </ul>
             </nav>
         </mat-toolbar-row>

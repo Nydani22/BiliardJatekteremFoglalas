@@ -17,7 +17,7 @@
                 </mat-select>
             </mat-form-field>
         </div>
-        <form action="">
+        <form (ngSubmit)="foglal()">
             @if (chosenTerem.value!==null) {
                 <div style="height: 150px; margin-bottom: 10px;">
                     <img src={{Termek[chosenTerem.value-1].terem_kep_url}} alt={{Termek[chosenTerem.value-1].kep_title}}>
@@ -43,8 +43,8 @@
                         }
                     </mat-selection-list>
                 }
-                <p>Elfogadom a szerződési feltételeket. <mat-slide-toggle></mat-slide-toggle></p>
-                <button mat-fab extended style="width: 100%;">
+                <p>Elfogadom a szerződési feltételeket.<mat-slide-toggle [(ngModel)]="isAccepted" name="acceptTerms"></mat-slide-toggle></p>
+                <button mat-fab extended type="submit" style="width: 100%;">
                     <mat-icon>check_circle</mat-icon>
                     Foglalás
                 </button>

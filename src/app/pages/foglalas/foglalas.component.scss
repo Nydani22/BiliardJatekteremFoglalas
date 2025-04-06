@@ -1,10 +1,24 @@
-#foglalas {
-    /*
-    background: rgb(2,0,36);
-    background: linear-gradient(129deg, rgba(2,0,36,1) 15%, rgba(0,79,64,1) 80%);
-    color: #00fbfb;
-    */
-}
 h1 {
     text-align: center;
+}
+
+.input {
+    margin: 10px;
+}
+
+form {
+    max-width: 600px;
+    margin: auto;
+}
+
+img {
+    height: 150px;
+    width: 250px;
+    object-fit: cover;
+    float: right;
+}
+
+#idopontok {
+    height: 200px;
+    overflow-x: auto;
 }

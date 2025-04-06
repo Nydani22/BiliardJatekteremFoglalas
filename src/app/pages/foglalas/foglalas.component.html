@@ -1,9 +1,54 @@
 <div id="foglalas">
     <h1>Foglalás</h1>
-    <mat-grid-list cols="2" rowHeight="2:1">
-        <mat-grid-tile>1</mat-grid-tile>
-        <mat-grid-tile>2</mat-grid-tile>
-        <mat-grid-tile>3</mat-grid-tile>
-        <mat-grid-tile>4</mat-grid-tile>
-    </mat-grid-list>
+    <div id="box">
+        <div style="text-align: center;">
+            <mat-form-field class="input">
+                <mat-label>Válasz dátumot</mat-label>
+                <input matInput [matDatepicker]="picker" [(ngModel)]="today" [min]="today" />
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker touchUi #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field class="input">
+                <mat-label>Válassz termet</mat-label>
+                <mat-select [(ngModel)]="selectedValue" name="terem" #chosenTerem (change)="reload()">
+                @for (terem of termek; track terem) {
+                    <mat-option [value]="terem.value">{{terem.viewValue}}</mat-option>
+                }
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <form action="">
+            @if (chosenTerem.value!==null) {
+                <div style="height: 150px; margin-bottom: 10px;">
+                    <img src={{Termek[chosenTerem.value-1].terem_kep_url}} alt={{Termek[chosenTerem.value-1].kep_title}}>
+                    <p>Férőhelyek száma: {{Termek[chosenTerem.value-1].maximum_ferohely}}</p>
+                    <p>Asztalok száma: {{Termek[chosenTerem.value-1].asztalok_szama}}</p>
+                    <p>Óradíj: {{Termek[chosenTerem.value-1].oradij}} </p>
+                </div>
+                <mat-divider></mat-divider>
+                @if (today) {
+                    <mat-selection-list id="idopontok">
+                        @for (ido of idopontok; track ido) {
+                            @if (ido.view.available) {
+                                <mat-list-option>{{ido.view.Value}}</mat-list-option>
+                            } @else {
+                                <mat-list-option disabled>{{ido.view.Value}}</mat-list-option>
+                            }
+                        }
+                    </mat-selection-list>
+                } @else {
+                    <mat-selection-list id="idopontok">
+                        @for (ido of idopontok; track ido) {
+                            <mat-list-option disabled>{{ido.view.Value}}</mat-list-option>
+                        }
+                    </mat-selection-list>
+                }
+                <p>Elfogadom a szerződési feltételeket. <mat-slide-toggle></mat-slide-toggle></p>
+                <button mat-fab extended style="width: 100%;">
+                    <mat-icon>check_circle</mat-icon>
+                    Foglalás
+                </button>
+            }
+        </form>
+    </div>
 </div>

@@ -63,9 +63,9 @@ export class SignupComponent implements OnInit {
     }
   }
 
-  username=new FormControl('');
-  password=new FormControl('');
-  password2=new FormControl('');
+  username=new FormControl('',Validators.minLength(4));
+  password=new FormControl('',Validators.minLength(7));
+  password2=new FormControl('',Validators.minLength(7));
   registerError:String="";
   signup() {
     //console.log("belepett");

@@ -25,8 +25,6 @@ import {merge} from 'rxjs';
 export class LoginComponent implements OnInit{
   isLoggedIn:boolean=false;
 
-  
-
   constructor() {
     merge(this.email.statusChanges, this.email.valueChanges)
       .pipe(takeUntilDestroyed())

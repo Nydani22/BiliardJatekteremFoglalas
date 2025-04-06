@@ -1,9 +1,23 @@
 <div id="fooldal">
     <h1>Főoldal</h1>
     <div class="grid">
-        <div class="items">1</div>
-        <div class="items">2</div>
-        <div class="items">3</div>
-        <div class="items">4</div>
+        @for (item of Termek; track $index) {
+            <div class="items" style="background-image: url({{item.terem_kep_url}});">
+                <div class="adatok">
+                    <h2>{{item.terem_nev}}</h2>
+                    <ul>
+                        <li>Maximum férőhely: {{item.maximum_ferohely}}</li>
+                        <li>Asztalok száma: {{item.asztalok_szama}}</li>
+                        <li>Óradíj: {{item.oradij}}Ft</li>
+                    </ul>
+                </div>
+                <div>
+                    <button mat-fab extended  class="btn" (click)="foglal(item.id)">
+                        <mat-icon>schedule</mat-icon>
+                        Foglalok
+                    </button>
+                </div>
+            </div>
+        }
     </div>
 </div>

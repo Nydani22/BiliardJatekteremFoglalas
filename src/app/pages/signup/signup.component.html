@@ -1,1 +1,69 @@
-<p>signup works!</p>
+<div id="signup">
+    <div id="box">
+        <h1>Regisztráció</h1>
+        <form (ngSubmit)="signup()" id="login_form">
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Felhasználónév</mat-label>
+                    <input
+                    matInput
+                    [formControl]="username"
+                    type="text"
+                    required
+                    />
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email cím</mat-label>
+                    <input
+                    matInput
+                    placeholder="pat@example.com"
+                    [formControl]="email"
+                    type="email"
+                    required
+                    />
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Jelszó</mat-label>
+                    <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="password" required/>
+                    <button
+                    mat-icon-button
+                    matSuffix
+                    (click)="clickEvent($event)"
+                    [attr.aria-pressed]="hide()"
+                    type="button"
+                    >
+                    <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Jelszó megerősítés</mat-label>
+                    <input matInput [type]="hide2() ? 'password' : 'text'" [formControl]="password2" required/>
+                    <button
+                    mat-icon-button
+                    matSuffix
+                    (click)="clickEvent2($event)"
+                    [attr.aria-pressed]="hide2()"
+                    type="button"
+                    >
+                    <mat-icon>{{hide2() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            @if (registerError) {
+                <div style="color: red;">
+                    {{ registerError }}
+                </div>
+            }
+            <div>
+                <p>Van már fiókod? Lépj be <span routerLink='/login' id="login">itt.</span></p>        
+            </div>
+            <button mat-flat-button type="submit">Regisztráció</button>
+        </form>
+    </div>
+</div>

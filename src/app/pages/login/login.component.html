@@ -17,7 +17,7 @@
             <div>
                 <mat-form-field appearance="outline">
                     <mat-label>Jelszó</mat-label>
-                    <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="password"/>
+                    <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="password" required/>
                     <button
                     mat-icon-button
                     matSuffix
@@ -35,7 +35,7 @@
                 </div>
             }
             <div>
-                <p>Nincs még fiókom létrehozom <span routerLink="['/signup']" id="register">itt.</span></p>        
+                <p>Nincs még fiókom létrehozom <span routerLink='/signup' id="register">itt.</span></p>        
             </div>
             <button mat-flat-button type="submit">Bejelentkezés</button>
         </form>

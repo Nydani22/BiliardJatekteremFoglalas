@@ -4,7 +4,7 @@
         <div style="text-align: center;">
             <mat-form-field class="input">
                 <mat-label>Válasz dátumot</mat-label>
-                <input matInput [matDatepicker]="picker" [(ngModel)]="today" [min]="today" />
+                <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDay" [min]="today" />
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker touchUi #picker></mat-datepicker>
             </mat-form-field>
@@ -26,7 +26,7 @@
                     <p>Óradíj: {{Termek[chosenTerem.value-1].oradij}} </p>
                 </div>
                 <mat-divider></mat-divider>
-                @if (today) {
+                @if (selectedDay) {
                     <mat-selection-list id="idopontok">
                         @for (ido of idopontok; track ido) {
                             @if (ido.view.available) {

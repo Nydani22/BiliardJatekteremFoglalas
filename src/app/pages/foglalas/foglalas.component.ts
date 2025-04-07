@@ -23,6 +23,7 @@ import { MatSnackBar,MatSnackBarModule } from '@angular/material/snack-bar';
 })
 export class FoglalasComponent {
   today!: Date;
+  selectedDay!: Date;
   Termek=Termek;
   selectedValue: string = "";
   teremId:Number=0;

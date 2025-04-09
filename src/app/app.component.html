@@ -23,12 +23,14 @@
                             Foglalás
                         </button>
                     </li>
+                    @if (isLoggedIn) {
                     <li>
                         <button mat-fab extended routerLink="/profil">
                             <mat-icon>person</mat-icon>
                             Profil
                         </button>
                     </li>
+                    }
                     @if (isLoggedIn) {
                         <li>
                             <button mat-fab extended (click)="logout()">

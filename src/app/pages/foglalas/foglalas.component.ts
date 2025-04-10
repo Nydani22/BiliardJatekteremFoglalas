@@ -12,11 +12,12 @@ import { Termek } from '../../shared/data';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar,MatSnackBarModule } from '@angular/material/snack-bar';
+import { FormatTimeRangePipe } from '../../shared/pipes/format-time-range.pipe';
 
 @Component({
   selector: 'app-foglalas',
   providers: [provideNativeDateAdapter()],
-  imports: [MatGridListModule,MatListModule, MatSlideToggleModule, FormsModule, MatFormFieldModule, MatDatepickerModule, MatInputModule, MatSelectModule, MatIconModule,MatButtonModule, MatSnackBarModule],
+  imports: [MatGridListModule,MatListModule, MatSlideToggleModule, FormsModule, MatFormFieldModule, MatDatepickerModule, MatInputModule, MatSelectModule, MatIconModule,MatButtonModule, MatSnackBarModule, FormatTimeRangePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './foglalas.component.html',
   styleUrl: './foglalas.component.scss'

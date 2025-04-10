@@ -30,16 +30,17 @@
                     <mat-selection-list id="idopontok">
                         @for (ido of idopontok; track ido) {
                             @if (ido.view.available) {
-                                <mat-list-option>{{ido.view.Value}}</mat-list-option>
+                                <mat-list-option>{{ido.view.Value | formatTimeRange }}</mat-list-option>
                             } @else {
-                                <mat-list-option disabled>{{ido.view.Value}}</mat-list-option>
+                                <mat-list-option disabled>{{ido.view.Value | formatTimeRange }}</mat-list-option>
+
                             }
                         }
                     </mat-selection-list>
                 } @else {
                     <mat-selection-list id="idopontok">
                         @for (ido of idopontok; track ido) {
-                            <mat-list-option disabled>{{ido.view.Value}}</mat-list-option>
+                            <mat-list-option disabled>{{ido.view.Value | formatTimeRange }}</mat-list-option>
                         }
                     </mat-selection-list>
                 }

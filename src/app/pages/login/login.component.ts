@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, NgModule } from '@angular/core';
+import { Component, OnInit, signal, inject, NgModule, OnDestroy } from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,7 +6,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import { RouterLink } from '@angular/router';
-import {merge} from 'rxjs';
+import {merge, Subscription} from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 
 
@@ -21,8 +21,9 @@ import { AuthService } from '../../shared/services/auth.service';
 
 
 
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit, OnDestroy{
   isLoggedIn:boolean=false;
+  authSub?:Subscription
 
   constructor(private authService:AuthService) {
     merge(this.email.statusChanges, this.email.valueChanges)
@@ -90,5 +91,9 @@ export class LoginComponent implements OnInit{
         default: this.loginError="Sikertelen, később próbáld újra!"; break;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.authSub?.unsubscribe();
   }
 }

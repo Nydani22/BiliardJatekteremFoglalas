@@ -5,6 +5,8 @@ import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { Subscription } from 'rxjs';
+import { AuthService } from './shared/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -14,28 +16,24 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class AppComponent implements OnInit {
   title = 'BJI';
-  isLoggedIn=false;
+  isLoggedIn = false;
 
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.checkLoginStatus();
+    this.authService.currentUser.subscribe(user => {
+      this.isLoggedIn = !!user;
+    });
   }
 
-  checkLoginStatus(): void {
-    this.isLoggedIn=localStorage.getItem('isLoggedIn')==="true";
-  }
-
-  logout(): void {
-    this.isLoggedIn=false;
-    localStorage.setItem("isLoggedIn","false");
-    window.location.href="/fooldal";
-    
-  }
   
 
+  logout(): void {
+    this.authService.signOut();
+    window.location.href = "/fooldal";
+  }
 
-  toggle(sidenav: MatSidenav){
+  toggle(sidenav: MatSidenav) {
     sidenav.toggle();
   }
 }

@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import { MatSidenav } from '@angular/material/sidenav';
+import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-menu',
   imports: [
@@ -22,7 +23,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
 
 
-  constructor() {}
+  constructor(private authService: AuthService) {}
   ngAfterViewInit(): void {}
   ngOnInit(): void {}
 
@@ -34,8 +35,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
   }
 
   logout() {
-    localStorage.setItem("isLoggedIn","false");
-    window.location.href="/fooldal";
+    this.authService.signOut();
+    this.logoutEvent.emit();
     this.closeMenu();
   }
 }

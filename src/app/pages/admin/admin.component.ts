@@ -14,6 +14,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-admin',
@@ -25,7 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatNativeDateModule,
     MatCardModule,
     MatListModule,
-    MatIconModule,],
+    MatIconModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
 })
@@ -57,7 +58,8 @@ export class AdminComponent implements OnInit {
 
   constructor(
     private idopontService: IdopontService,
-    private teremService: TeremService
+    private teremService: TeremService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -70,8 +72,6 @@ export class AdminComponent implements OnInit {
     return terem ? terem.terem_nev : 'Nincs terem';
   }
 
-  // === Időpontok ===
-
   loadIdopontok(): void {
     this.idopontService.getAllIdopontok().subscribe(data => {
       this.idopontok = data;
@@ -80,7 +80,7 @@ export class AdminComponent implements OnInit {
 
   createIdopont(): void {
     if (!this.validateIdoIntervallum(this.kezdIdo, this.vegIdo)) {
-      alert("Az időintervallum hibás. Csak 08:00–22:00 között, és legalább 1 óra különbséggel engedélyezett.");
+      this.snackBar.open("Az időintervallum hibás. Csak 08:00–22:00 között, és legalább 1 óra különbséggel engedélyezett.", "Ok", { duration: 5000 });
       return;
     }
     const formattedDate = this.formatDate(this.ujIdopont.date);
@@ -105,8 +105,10 @@ export class AdminComponent implements OnInit {
       this.vegIdo = '';
     });
   }
+
+
   private formatDate(date: any): string {
-    if (typeof date === 'string') return date; // már stringként van
+    if (typeof date === 'string') return date;
     const d = new Date(date);
     const year = d.getFullYear();
     const month = (`0${d.getMonth() + 1}`).slice(-2);
@@ -125,13 +127,13 @@ export class AdminComponent implements OnInit {
     const kezdIdo = kezdOra * 60 + kezdPerc;
     const vegIdo = vegOra * 60 + vegPerc;
 
-    const minKezd = 8 * 60; // 08:00
-    const maxVeg = 22 * 60; // 22:00
+    const minKezd = 8 * 60;
+    const maxVeg = 22 * 60;
 
     return (
       kezdIdo >= minKezd &&
       vegIdo <= maxVeg &&
-      vegIdo - kezdIdo >= 60 // Legalább 1 óra
+      vegIdo - kezdIdo >= 60
     );
   }
 

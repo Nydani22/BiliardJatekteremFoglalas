@@ -1,20 +1,40 @@
-import { Component } from '@angular/core';
-import {MatGridListModule} from '@angular/material/grid-list';
-import { Termek } from '../../shared/data';
+import { Component, OnInit } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
+import { Terem } from '../../shared/model/termek';
+import { TeremService } from '../../shared/services/terem.service';
+
+
 @Component({
   selector: 'app-fooldal',
-  imports: [MatGridListModule, MatButtonModule, MatIconModule],
+  standalone: true,
+  imports: [CommonModule, MatGridListModule, MatButtonModule, MatIconModule],
   templateUrl: './fooldal.component.html',
   styleUrl: './fooldal.component.scss'
 })
-export class FooldalComponent {
-  Termek=Termek;
-  constructor() {}
-  foglal(id:number) {
-    localStorage.setItem("teremId", id.toString());
-    window.location.href="/foglalas";
-    //console.log(localStorage.getItem("teremId"));
+export class FooldalComponent implements OnInit {
+  termek: Terem[] = [];
+  loading = true;
+
+  constructor(private teremService: TeremService) {}
+
+  ngOnInit(): void {
+    this.teremService.getAllTermek().subscribe({
+      next: (data) => {
+        this.termek = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Hiba a termek lekérdezésekor:', err);
+        this.loading = false;
+      }
+    });
+  }
+  
+  foglal(id: string) {
+    localStorage.setItem("teremId", id);
+    window.location.href = "/foglalas";
   }
 }

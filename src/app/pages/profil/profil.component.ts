@@ -1,38 +1,41 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin, of, switchMap } from 'rxjs';
 import { UserService } from '../../shared/services/user.service';
 import { User } from '../../shared/model/users';
 import { Idopont } from '../../shared/model/idopontok';
+import { FoglalasokService } from '../../shared/services/foglalasok.service';
+import { IdopontService } from '../../shared/services/idopont.service';
+import { AuthService } from '../../shared/services/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TeremService } from '../../shared/services/terem.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IdopontService } from '../../shared/services/idopont.service';
-import { AuthService } from '../../shared/services/auth.service';
-import {MatCardModule} from '@angular/material/card';
 import { DatePipe } from '../../shared/pipes/date.pipe';
-import { TeremService } from '../../shared/services/terem.service';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatCardModule} from '@angular/material/card';
+import { Foglalas } from '../../shared/model/foglalasok';
 
 @Component({
   selector: 'app-profil',
-  imports: [MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, MatCardModule,DatePipe, MatSnackBarModule],
   templateUrl: './profil.component.html',
-  styleUrl: './profil.component.scss'
+  imports: [MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, DatePipe, MatCardModule],
+  styleUrls: ['./profil.component.scss'],
 })
 export class ProfilComponent implements OnInit, OnDestroy {
   user: User | null = null;
   idopontok: Idopont[] = [];
+  foglalasok: Foglalas[] = [];
   currentPassword: string = '';
   private subscription: Subscription | null = null;
-  termekMap: Map<number, string> = new Map();
-
+  termekMap: Map<string, string> = new Map();
 
   constructor(
     private userService: UserService,
+    private foglalasokService: FoglalasokService,
     private idopontService: IdopontService,
-    private authService: AuthService, 
+    private authService: AuthService,
     private snackBar: MatSnackBar,
     private teremService: TeremService,
   ) {}
@@ -40,41 +43,46 @@ export class ProfilComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadProfil();
   }
-  
-  
-
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
   }
 
   loadProfil(): void {
-    this.subscription = this.userService.getUserProfil().subscribe({
-      next: (data) => {
-        this.user = data.user;
-        this.idopontok = data.idopontok;
-        console.log(data)
-      },
-      error: (error) => {
-        console.error("Hiba a profil betöltésekor:", error);
-      }
-    });
+    this.subscription = this.userService.getUserProfil().pipe(
+      switchMap((user) => {
+        this.user = user;
+        if (!user) return of([]);
+        return this.foglalasokService.getFoglalasokByUserId(user.id);
+      }),
+      switchMap((foglalasok) => {
+        this.foglalasok = foglalasok;
+        if (!foglalasok.length) return of([]);
+        const idopontRequests = foglalasok.map(f =>
+          this.idopontService.getIdopontById(f.idopontid)
+        );
+        return forkJoin(idopontRequests);
+      })
+      ).subscribe({
+        next: (idopontok) => {
+          this.idopontok = idopontok.filter(i => i !== null) as Idopont[];
+        },
+        error: (error) => {
+          console.error("Hiba a profil betöltésekor:", error);
+        }
+      });
     this.teremService.getAllTermek().subscribe(termek => {
       this.termekMap = new Map(termek.map(t => [t.id, t.terem_nev]));
     });
   }
-  
 
- 
 
   async saveProfil() {
     if (!this.user || !this.currentPassword) return;
     try {
       const success = await this.authService.reauthenticate(this.currentPassword);
       if (!success) {
-        this.snackBar.open("Hibás jelszó!", "Ok", {
-          duration: 5000
-        });
+        this.snackBar.open("Hibás jelszó!", "Ok", { duration: 5000 });
         return;
       }
 
@@ -83,15 +91,11 @@ export class ProfilComponent implements OnInit, OnDestroy {
         email: this.user.email
       });
 
-      this.snackBar.open("Sikeres mentés!", "Ok", {
-        duration: 3000
-      });
+      this.snackBar.open("Sikeres mentés!", "Ok", { duration: 3000 });
       this.currentPassword = '';
     } catch (err) {
       console.error("Mentési hiba:", err);
-      this.snackBar.open("Hiba a mentés közben.", "Ok", {
-        duration: 5000
-      });
+      this.snackBar.open("Hiba a mentés közben.", "Ok", { duration: 5000 });
     }
   }
 
@@ -104,17 +108,25 @@ export class ProfilComponent implements OnInit, OnDestroy {
       console.error("Törlési hiba:", err);
     }
   }
+  
+  getFoglalasIdByIdopont(idopontId: string): string | undefined {
+    return this.foglalasok.find(f => f.idopontid === idopontId)?.id;
+  }
 
-  async deleteIdopont(id: string) {
-    if (!confirm("Biztosan törölni szeretnéd ezt az időpontot?")) return;
+  async deleteFoglalas(id: string, idoid: string) {
+    if (!confirm("Biztosan törölni szeretnéd ezt a foglalást?")) return;
     try {
-      await this.idopontService.deleteIdopont(id);
-      this.idopontok = this.idopontok.filter(i => i.id !== id);
-      this.snackBar.open("Sikeres törlés.", "Ok", {
-        duration: 3000
+      console.log("halo");
+      await this.foglalasokService.deleteFoglalas(id);
+      await this.idopontService.updateIdopontAvailability(idoid,true);
+      this.foglalasok = this.foglalasok.filter(f => f.id !== id);
+      this.idopontok = this.idopontok.filter(i => {
+        return !this.foglalasok.some(f => f.idopontid === i.id);
       });
+      this.snackBar.open("Sikeres törlés.", "Ok", { duration: 3000 });
     } catch (err) {
-      console.error("Időpont törlési hiba:", err);
+      console.error("Foglalás törlési hiba:", err);
     }
   }
+
 }

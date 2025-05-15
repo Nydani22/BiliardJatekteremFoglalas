@@ -1,7 +1,7 @@
 <div id="fooldal">
     <h1>Főoldal</h1>
     <div class="grid">
-        @for (item of Termek; track $index) {
+        @for (item of termek; track $index) {
             <div class="items" style="background-image: url({{item.terem_kep_url}});">
                 <div class="adatok">
                     <h2>{{item.terem_nev}}</h2>

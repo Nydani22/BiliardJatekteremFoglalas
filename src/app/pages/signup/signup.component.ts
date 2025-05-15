@@ -75,7 +75,6 @@ export class SignupComponent implements OnInit {
       const userData: Partial<User> = {
         username: this.username.value,
         email: this.email.value,
-        idopontok: [],
       }
       this.authService.signUp(this.email.value, this.password.value, userData)
         .then(userCredential => {

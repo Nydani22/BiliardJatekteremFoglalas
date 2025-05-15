@@ -27,6 +27,15 @@ export class AuthService {
     });
   }
 
+  async getCurrentUser(): Promise<FirebaseUser | null> {
+    return new Promise((resolve) => {
+      const unsubscribe = authState(this.auth).subscribe(user => {
+        unsubscribe.unsubscribe();
+        resolve(user);
+      });
+    });
+  }
+
   async signUp(email : string, password : string, userData: Partial<User>): Promise<UserCredential> {
     try {
       const UserCredential=await createUserWithEmailAndPassword(
@@ -40,7 +49,6 @@ export class AuthService {
         id: UserCredential.user.uid,
         email: email,
         role: "user",
-        idopontok: [],
       });
       return UserCredential;
     }  catch (error) {

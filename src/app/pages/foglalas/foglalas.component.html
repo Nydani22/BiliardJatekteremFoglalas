@@ -4,43 +4,34 @@
         <div style="text-align: center;">
             <mat-form-field class="input">
                 <mat-label>Válasz dátumot</mat-label>
-                <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDay" [min]="today" />
+                <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDay" [min]="today" (ngModelChange)="onDateChange($event)"/>
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker touchUi #picker></mat-datepicker>
             </mat-form-field>
             <mat-form-field class="input">
                 <mat-label>Válassz termet</mat-label>
-                <mat-select [(ngModel)]="selectedValue" name="terem" #chosenTerem (change)="reload()">
+                <mat-select [(ngModel)]="selectedValue" name="terem" #chosenTerem (ngModelChange)="reload()">
                 @for (terem of termek; track terem) {
-                    <mat-option [value]="terem.value">{{terem.viewValue}}</mat-option>
+                    <mat-option [value]="terem.id">{{terem.terem_nev}}</mat-option>
                 }
                 </mat-select>
             </mat-form-field>
         </div>
         <form (ngSubmit)="foglal()">
-            @if (chosenTerem.value!==null) {
+            @if (selectedValue && termek) {
                 <div style="height: 150px; margin-bottom: 10px;">
-                    <img src={{Termek[chosenTerem.value-1].terem_kep_url}} alt={{Termek[chosenTerem.value-1].kep_title}}>
-                    <p>Férőhelyek száma: {{Termek[chosenTerem.value-1].maximum_ferohely}}</p>
-                    <p>Asztalok száma: {{Termek[chosenTerem.value-1].asztalok_szama}}</p>
-                    <p>Óradíj: {{Termek[chosenTerem.value-1].oradij}} </p>
+                    <img src={{getTeremById(selectedValue)?.terem_kep_url}} alt={{getTeremById(selectedValue)?.kep_title}}>
+                    <p>Férőhelyek száma: {{getTeremById(selectedValue)?.maximum_ferohely}}</p>
+                    <p>Asztalok száma: {{getTeremById(selectedValue)?.asztalok_szama}}</p>
+                    <p>Óradíj: {{getTeremById(selectedValue)?.oradij}} </p>
                 </div>
                 <mat-divider></mat-divider>
                 @if (selectedDay) {
-                    <mat-selection-list id="idopontok">
+                    <mat-selection-list [(ngModel)]="selectedIdopontId" name="selectedIdopontId" [multiple]="false" id="idopontok">
                         @for (ido of idopontok; track ido) {
-                            @if (ido.view.available) {
-                                <mat-list-option>{{ido.view.Value | formatTimeRange }}</mat-list-option>
-                            } @else {
-                                <mat-list-option disabled>{{ido.view.Value | formatTimeRange }}</mat-list-option>
-
+                            @if (ido.available) {
+                                <mat-list-option [value]="ido.id">{{ido.intervallum| formatTimeRange }}</mat-list-option>
                             }
-                        }
-                    </mat-selection-list>
-                } @else {
-                    <mat-selection-list id="idopontok">
-                        @for (ido of idopontok; track ido) {
-                            <mat-list-option disabled>{{ido.view.Value | formatTimeRange }}</mat-list-option>
                         }
                     </mat-selection-list>
                 }

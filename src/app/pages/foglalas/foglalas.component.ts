@@ -1,18 +1,25 @@
-import { ChangeDetectionStrategy,Component, inject } from '@angular/core';
+
+import { ChangeDetectionStrategy,ChangeDetectorRef,Component, inject, OnInit } from '@angular/core';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatDatepickerInputEvent, MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {provideNativeDateAdapter} from '@angular/material/core';
-import { Termek } from '../../shared/data';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar,MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormatTimeRangePipe } from '../../shared/pipes/format-time-range.pipe';
+import { TeremService } from '../../shared/services/terem.service';
+import { IdopontService } from '../../shared/services/idopont.service';
+import { Idopont } from '../../shared/model/idopontok';
+import { Terem } from '../../shared/model/termek';
+import { AuthService } from '../../shared/services/auth.service';
+import { FoglalasokService } from '../../shared/services/foglalasok.service';
+import { Foglalas } from '../../shared/model/foglalasok';
 
 @Component({
   selector: 'app-foglalas',
@@ -22,59 +29,124 @@ import { FormatTimeRangePipe } from '../../shared/pipes/format-time-range.pipe';
   templateUrl: './foglalas.component.html',
   styleUrl: './foglalas.component.scss'
 })
-export class FoglalasComponent {
-  today!: Date;
-  selectedDay!: Date;
-  Termek=Termek;
-  selectedValue: string = "";
-  teremId:Number=0;
-  isAccepted: boolean = false;
-  stored = localStorage.getItem("teremId");
-  id = this.stored ? parseInt(this.stored, 10) : null;
-  
+export class FoglalasComponent implements OnInit {
+  termek: Terem[] = [];
+  idopontok: Idopont[] = [];
+  selectedValue: string | null = null;
+  selectedDay: Date | null = null;
+  selectedIdopontId: string | null = null;
+  isAccepted = false;
+
+  today = new Date();
+
+  constructor(
+    private teremService: TeremService,
+    private idopontService: IdopontService,
+    private foglalasokService: FoglalasokService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
+    private snackbar: MatSnackBar,
+  ) {}
+
   ngOnInit(): void {
-    if (this.id!==null) {
-      this.selectedValue = this.termek[this.id-1].value;
-    } else {
-      this.selectedValue = this.termek[0].value;
+    this.selectedDay = new Date();
+    const storedTeremId = localStorage.getItem('teremId');
+    if (storedTeremId) {
+      this.selectedValue = storedTeremId;
+      localStorage.removeItem('teremId');
     }
-    this.today = new Date();
-    localStorage.removeItem("teremId");
-  }
-
-  private _snackBar = inject(MatSnackBar);
-
-  reload() {}
-
-  foglal() {
-    if (this.isAccepted) {
-      //console.log(this.today);
-      this._snackBar.open('Sikeres foglalás!', 'Undo', {
-        duration: 3000
-      });
-    } else {
-      this._snackBar.open('Sikertelen, fogadd el a szerződési feltételeket!', 'Undo', {
-        duration: 3000
-      });
-    }
+    this.loadTermek();
   }
   
+
+
+  loadTermek() {
+    this.teremService.getAllTermek().subscribe((data) => {
+      this.termek = data;
+      if (this.selectedValue && this.selectedDay) {
+        this.loadIdopontok(this.selectedValue, this.selectedDay);
+      }
+      this.cdr.markForCheck();
+    });
+  }
+
+  loadIdopontok(teremId: string, date: Date) {
+    const dateString = this.formatDateToLocalString(date);
+    this.idopontService
+      .getIdopontokByTeremIdAndDate(teremId, dateString)
+      .subscribe((data) => {
+        this.idopontok = data.filter((ido) => ido.available);
+        this.cdr.markForCheck();
+      });
+  }
+
+  formatDateToLocalString(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   
-  idopontok = [
-    {value: '1', view: {Value: "12:00-13:00", available: true}},
-    {value: '2', view: {Value: "13:00-14:00", available: true}},
-    {value: '3', view: {Value: "14:00-15:00", available: false}},
-    {value: '4', view: {Value: "15:00-16:00", available: false}},
-    {value: '5', view: {Value: "16:00-17:00", available: true}},
-    {value: '6', view: {Value: "17:00-18:00", available: true}},
-    {value: '7', view: {Value: "18:00-19:00", available: true}},
-    {value: '8', view: {Value: "19:00-20:00", available: true}},
-  ];
-  termek = [
-    {value: '1', viewValue: '1. Terem'},
-    {value: '2', viewValue: '2. Terem'},
-    {value: '3', viewValue: '3. Terem'},
-    {value: '4', viewValue: '4. Terem'},
-    {value: '5', viewValue: '5. Terem'},
-  ];
+  onDateChange(date: Date) {
+    this.selectedDay = date;
+    if (this.selectedValue && this.selectedDay) {
+      this.loadIdopontok(this.selectedValue, this.selectedDay);
+    }
+  }
+
+  reload() {
+    setTimeout(() => {
+      this.selectedIdopontId = null;
+      if (this.selectedValue && this.selectedDay) {
+        this.loadIdopontok(this.selectedValue, this.selectedDay);
+      } else {
+        this.idopontok = [];
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+
+  getTeremById(id: string): Terem | undefined {
+    return this.termek.find((t) => t.id === id);
+  }
+
+  async foglal() {
+    if (!this.selectedIdopontId) {
+      this.snackbar.open("Válassz időpontot.", "Ok", { duration: 5000 });
+      return;
+    }
+
+    if (!this.isAccepted) {
+      this.snackbar.open("Fogadd el a szerződési feltételeket!", "Ok", { duration: 5000 });
+      return;
+    }
+
+    try {
+      const currentUser = await this.authService.getCurrentUser();
+      if (!currentUser) throw new Error('Nincs bejelentkezett felhasználó.');
+
+      const foglalas: Omit<Foglalas, 'id'> = {
+        userid: currentUser.uid,
+        idopontid: this.selectedIdopontId[0]
+      };
+      await this.foglalasokService.addFoglalas(foglalas);
+      await this.idopontService.updateIdopontAvailability(this.selectedIdopontId[0], false);
+      this.snackbar.open("Sikeres foglalás létrehozva.", "Ok", { duration: 5000 });
+    } catch (error) {
+      console.error('Hiba a foglalás létrehozásakor:', error);
+      throw error;
+    }
+  }
+
+
+  trackByTeremId(index: number, item: Terem) {
+    return item.id;
+  }
+
+  trackByIdopontId(index: number, item: Idopont) {
+    return item.id;
+  }
 }
+  

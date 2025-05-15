@@ -18,8 +18,8 @@
         <input matInput [(ngModel)]="currentPassword" type="password" />
       </mat-form-field>
 
-      <button mat-raised-button color="primary" (click)="saveProfil()">Mentés</button>
-      <button mat-raised-button color="warn" (click)="deleteProfil()">Fiók törlése</button>
+      <button mat-raised-button color="primary" style="margin: 5px;" (click)="saveProfil()">Mentés</button>
+      <button mat-raised-button color="warn"  style="margin: 5px;" (click)="deleteProfil()">Fiók törlése</button>
     </div>
     @if (idopontok.length > 0) {
       <div style="margin-top: 30px; width: 100%; max-width: 600px;">
@@ -29,8 +29,12 @@
             <mat-card-content>
               <p><strong>Dátum:</strong> {{ ido.date | date }}</p>
               <p><strong>Intervallum:</strong> {{ ido.intervallum }}</p>
-              <p><strong>Terem ID:</strong> {{ ido.teremid }}</p>
-              <button mat-button color="warn" (click)="deleteIdopont(ido.id)">Időpont törlése</button>
+              <p><strong>Terem:</strong> {{ termekMap.get(ido.teremid) || ido.teremid }}</p>
+              <button mat-button color="warn"
+                    [disabled]="!getFoglalasIdByIdopont(ido.id)"
+                    (click)="deleteFoglalas(getFoglalasIdByIdopont(ido.id)!, ido.id)">
+                Foglalás törlése
+              </button>
             </mat-card-content>
           </mat-card>
         }

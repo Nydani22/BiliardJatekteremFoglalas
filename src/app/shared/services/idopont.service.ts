@@ -7,12 +7,12 @@ import {
   doc,
   updateDoc,
   deleteDoc,
-  getDocs,
   query,
   where,
-  CollectionReference
+  CollectionReference,
+  getDoc
 } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { catchError, from, Observable, of } from 'rxjs';
 import { Idopont } from '../model/idopontok';
 
 @Injectable({
@@ -22,31 +22,54 @@ export class IdopontService {
   private idopontCollection: CollectionReference;
 
   constructor(private firestore: Firestore) {
-    this.idopontCollection=collection(this.firestore, 'Idopontok');
+    this.idopontCollection = collection(this.firestore, 'Idopontok');
   }
 
-  
   getAllIdopontok(): Observable<Idopont[]> {
     return collectionData(this.idopontCollection, { idField: 'id' }) as Observable<Idopont[]>;
   }
 
-  
   getIdopontokByTeremId(teremid: string): Observable<Idopont[]> {
     const q = query(this.idopontCollection, where('teremid', '==', teremid));
     return collectionData(q, { idField: 'id' }) as Observable<Idopont[]>;
   }
 
-  
+  getIdopontokByTeremIdAndDate(teremid: string, date: string): Observable<Idopont[]> {
+    const q = query(
+      this.idopontCollection,
+      where('teremid', '==', teremid),
+      where('date', '==', date)
+    );
+    return collectionData(q, { idField: 'id' }) as Observable<Idopont[]>;
+  }
+
+
+
+  getIdopontById(id: string): Observable<Idopont | null> {
+    const idopontDocRef = doc(this.firestore, 'Idopontok', id);
+    return from(getDoc(idopontDocRef).then(docSnap => {
+      if (docSnap.exists()) {
+        return { ...(docSnap.data() as Idopont), id: docSnap.id };
+      } else {
+        return null;
+      }
+    })).pipe(
+      catchError(() => of(null))
+    );
+  }
+  updateIdopontAvailability(idopontId: string, available: boolean): Promise<void> {
+    const idopontRef = doc(this.firestore, 'Idopontok', idopontId);
+    return updateDoc(idopontRef, { available });
+  }
+
   createIdopont(idopont: Omit<Idopont, 'id'>): Promise<any> {
     return addDoc(this.idopontCollection, idopont);
   }
 
-  
   updateIdopont(id: string, updated: Partial<Idopont>): Promise<void> {
     return updateDoc(doc(this.firestore, 'Idopontok', id), updated);
   }
 
-  
   deleteIdopont(id: string): Promise<void> {
     return deleteDoc(doc(this.firestore, 'Idopontok', id));
   }

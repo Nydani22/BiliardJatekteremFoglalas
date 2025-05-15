@@ -5,7 +5,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { ProfilComponent } from './pages/profil/profil.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { adminGuard, authGuard, publicGuard } from './shared/guards/auth/auth.guard';
-import { AdminComponent } from './pages/admin/admin/admin.component';
+import { AdminComponent } from './pages/admin/admin.component';
 
 export const routes: Routes = [
     {path: 'fooldal', component: FooldalComponent},

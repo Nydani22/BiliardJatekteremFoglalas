@@ -55,9 +55,9 @@
                     </button>
                 </mat-form-field>
             </div>
-            @if (registerError) {
+            @if (errorMessage()) {
                 <div style="color: red;">
-                    {{ registerError }}
+                   {{ errorMessage() }}
                 </div>
             }
             <div>

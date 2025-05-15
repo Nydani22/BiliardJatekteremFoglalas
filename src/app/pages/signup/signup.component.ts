@@ -7,6 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { merge } from 'rxjs';
+import { AuthService } from '../../shared/services/auth.service';
+import { User } from '../../shared/model/users';
 
 @Component({
   selector: 'app-signup',
@@ -19,7 +21,7 @@ export class SignupComponent implements OnInit {
 
 
   
-  constructor() {
+  constructor(private authService:AuthService) {
     merge(this.email.statusChanges, this.email.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateErrorMessage());
@@ -66,14 +68,36 @@ export class SignupComponent implements OnInit {
   username=new FormControl('',Validators.minLength(4));
   password=new FormControl('',Validators.minLength(7));
   password2=new FormControl('',Validators.minLength(7));
-  registerError:String="";
   signup() {
-    //console.log("belepett");
+    
     if (this.email.value!==null && this.password.value !== null && this.password.value===this.password2.value && this.username.value!==null) {
-      localStorage.setItem("isLoggedIn", "true");
-      window.location.href='/fooldal';
+      /*localStorage.setItem("isLoggedIn", "true");*/
+      const userData: Partial<User> = {
+        username: this.username.value,
+        email: this.email.value,
+        idopontok: [],
+      }
+      this.authService.signUp(this.email.value, this.password.value, userData)
+        .then(userCredential => {
+          console.log("Regisztáció sikeres.", userCredential.user);
+          this.authService.updateLoginStatus(true);
+          window.location.href='/fooldal';
+        })
+        .catch(error =>{
+          console.log("Regisztráció hiba: ", error);
+          switch (error.code) {
+          case "auth/email-already-in-use": 
+            this.errorMessage.set("Ez az email már használt."); break;
+          case "auth/invalid=email":
+            this.errorMessage.set("Érvénytelen email."); break;
+          case "auth/weak-password":
+            this.errorMessage.set("Gyenge jelszó."); break;
+          default:
+            this.errorMessage.set("Próbáld újra később.");
+          }
+        });
     } else {
-      this.registerError="Hibás email vagy jelszó!";
+      this.errorMessage.set("Hibás email vagy jelszó!");  
     }
   }
 }

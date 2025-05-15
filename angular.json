@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "biliard-jatekterem-idopontfoglalo": {
+    "biliardip": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/biliard-jatekterem-idopontfoglalo",
+            "outputPath": "dist/biliardip",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -42,8 +42,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1500kB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "biliard-jatekterem-idopontfoglalo:build:production"
+              "buildTarget": "biliardip:build:production"
             },
             "development": {
-              "buildTarget": "biliard-jatekterem-idopontfoglalo:build:development"
+              "buildTarget": "biliardip:build:development"
             }
           },
           "defaultConfiguration": "development"

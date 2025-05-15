@@ -1,0 +1,23 @@
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+#admin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+mat-card {
+    padding: 2rem;
+    max-width: 1000px;
+    min-width: 500px;
+    margin: 2rem;
+}
+
+.mt-4 {
+  margin-top: 2rem;
+}

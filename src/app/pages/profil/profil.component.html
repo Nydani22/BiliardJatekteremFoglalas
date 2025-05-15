@@ -24,7 +24,7 @@
     @if (idopontok.length > 0) {
       <div style="margin-top: 30px; width: 100%; max-width: 600px;">
         <h3>Időpontjaid</h3>
-        <div style="overflow: auto; max-height: 200px;">
+        <div style="overflow-x: auto; max-height: 200px;">
         @for (ido of idopontok; track $index) {
           <mat-card style="margin-bottom: 10px;">
             <mat-card-content class="ido-row">
@@ -42,6 +42,5 @@
         </div>
       </div>
     }
-  }
-  
+  }  
 </div>

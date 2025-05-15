@@ -11,14 +11,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     width: 5px;
 }
 
-/* A csúszka ("thumb") */
 ::-webkit-scrollbar-thumb {
     background: #00fbfb !important;
     border-radius: 10px;
     width: 5px;
 }
 
-/* Hover effekt a thumb-re */
+
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }

@@ -1,1 +1,132 @@
-<p>admin works!</p>
+<div id="admin" class="p-4">
+  <mat-card>
+    <h2>Időpontok kezelése</h2>
+    <form (ngSubmit)="createIdopont()" #idopontForm="ngForm" class="form-grid">
+      <mat-form-field appearance="fill">
+        <mat-label>Terem</mat-label>
+        <mat-select [(ngModel)]="ujIdopont.teremid" name="teremid" required>
+          <mat-option value="" disabled>Válassz termet</mat-option>
+          <mat-option *ngFor="let terem of termek" [value]="terem.id">
+            {{ terem.terem_nev }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Dátum</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="ujIdopont.date" name="date" required />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Kezdési idő</mat-label>
+        <input
+            matInput
+            type="time"
+            [(ngModel)]="kezdIdo"
+            name="kezdIdo"
+            required
+            min="08:00"
+            max="21:00"
+        />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+        <mat-label>Végző idő</mat-label>
+        <input
+            matInput
+            type="time"
+            [(ngModel)]="vegIdo"
+            name="vegIdo"
+            required
+            min="09:00"
+            max="22:00"
+        />
+        </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="!idopontForm.valid">Hozzáadás</button>
+    </form>
+
+    <mat-list>
+    <mat-list-item *ngFor="let idopont of idopontok">
+        {{ idopont.date }} - {{ idopont.intervallum }} ({{ getTeremNev(idopont.teremid) }})
+        <button mat-icon-button color="warn" (click)="deleteIdopont(idopont.id)">
+        <mat-icon>delete</mat-icon>
+        </button>
+    </mat-list-item>
+    </mat-list>
+  </mat-card>
+
+  <mat-card class="mt-4">
+    <h2>Termek kezelése</h2>
+    <form (ngSubmit)="createTerem()" #teremForm="ngForm" class="form-grid">
+      <mat-form-field appearance="fill">
+        <mat-label>Név</mat-label>
+        <input matInput [(ngModel)]="ujTerem.terem_nev" name="terem_nev" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Kép URL</mat-label>
+        <input matInput [(ngModel)]="ujTerem.terem_kep_url" name="terem_kep_url" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Kép cím</mat-label>
+        <input matInput [(ngModel)]="ujTerem.kep_title" name="kep_title" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Asztalok száma</mat-label>
+        <input matInput type="number" [(ngModel)]="ujTerem.asztalok_szama" name="asztalok_szama" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Óradíj</mat-label>
+        <input matInput type="number" [(ngModel)]="ujTerem.oradij" name="oradij" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Férőhely</mat-label>
+        <input matInput type="number" [(ngModel)]="ujTerem.maximum_ferohely" name="maximum_ferohely" required />
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="!teremForm.valid">Hozzáadás</button>
+    </form>
+
+    <mat-list>
+      <mat-list-item *ngFor="let terem of termek">
+        {{ terem.terem_nev }} - {{ terem.maximum_ferohely }} fő
+        <button mat-icon-button color="warn" (click)="deleteTerem(terem.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="editTerem(terem)">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </mat-card>
+
+  <mat-card *ngIf="editingTeremId" class="mt-4">
+    <h3>Terem szerkesztése</h3>
+    <form (ngSubmit)="updateTerem()" #updateForm="ngForm" class="form-grid">
+      <mat-form-field appearance="fill">
+        <mat-label>Név</mat-label>
+        <input matInput [(ngModel)]="editTeremData.terem_nev" name="edit_terem_nev" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Óradíj</mat-label>
+        <input matInput type="number" [(ngModel)]="editTeremData.oradij" name="edit_oradij" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Férőhely</mat-label>
+        <input matInput type="number" [(ngModel)]="editTeremData.maximum_ferohely" name="edit_ferohely" />
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit">Mentés</button>
+      <button mat-stroked-button color="warn" type="button" (click)="cancelEdit()">Mégse</button>
+    </form>
+  </mat-card>
+</div>

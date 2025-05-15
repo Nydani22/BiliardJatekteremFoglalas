@@ -20,6 +20,21 @@ export const authGuard: CanActivateFn = (route, state) => {
   );
 };
 
+export const adminGuard: CanActivateFn = async () => {
+  const router = inject(Router);
+  const authService = inject(AuthService);
+
+  const role = await authService.getRole();
+
+  if (role === 'admin') {
+    return true;
+  }
+
+  router.navigate(['/fooldal']);
+  return false;
+};
+
+
 
 export const publicGuard: CanActivateFn = (route, state) => {
   const router=inject(Router);

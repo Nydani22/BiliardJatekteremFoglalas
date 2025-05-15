@@ -78,7 +78,13 @@ export class ProfilComponent implements OnInit, OnDestroy {
 
 
   async saveProfil() {
-    if (!this.user || !this.currentPassword) return;
+    if (!this.user) {
+      return; 
+    } else if (!this.currentPassword) {
+      this.snackBar.open("Add meg a jelszót!", "Ok", { duration: 5000 });
+      return;
+    }
+     
     try {
       const success = await this.authService.reauthenticate(this.currentPassword);
       if (!success) {
@@ -87,8 +93,7 @@ export class ProfilComponent implements OnInit, OnDestroy {
       }
 
       await this.userService.updateUserProfil(this.user.id, {
-        username: this.user.username,
-        email: this.user.email
+        username: this.user.username
       });
 
       this.snackBar.open("Sikeres mentés!", "Ok", { duration: 3000 });

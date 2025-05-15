@@ -1,6 +1,6 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav>
-        <app-menu [sidepanel]="sidenav" [isLoggedIn]="isLoggedIn" (logoutEvent)="logout()"></app-menu>
+        <app-menu [sidepanel]="sidenav" [isLoggedIn]="isLoggedIn" [isAdmin]="isAdmin" (logoutEvent)="logout()"></app-menu>
     </mat-sidenav>
     <mat-drawer-content>
         <mat-toolbar-row>
@@ -30,6 +30,14 @@
                             Profil
                         </button>
                     </li>
+                    }
+                    @if (isLoggedIn && isAdmin) {    
+                        <li>
+                            <button mat-fab extended routerLink="/admin">
+                                <mat-icon>manage_accounts</mat-icon>
+                                Admin
+                            </button>
+                        </li>
                     }
                     @if (isLoggedIn) {
                         <li>

@@ -19,6 +19,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
   @Input() sidepanel!: MatSidenav;
   @Input() isLoggedIn: boolean=false;
+  @Input() isAdmin: boolean=false;
   @Output() logoutEvent=new EventEmitter<void>();
 
 

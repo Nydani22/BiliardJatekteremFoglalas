@@ -33,9 +33,15 @@
                                 <mat-list-option [value]="ido.id">{{ido.intervallum| formatTimeRange }}</mat-list-option>
                             }
                         }
+                        @if (idopontok.length==0) {
+                        <div style="color: #00fbfb; font-style: italic; text-align: center  ;">
+                            <h4>Nincs elérhető időpont.</h4>
+                        </div>
+                    }
                     </mat-selection-list>
+                    
                 }
-                <p>Elfogadom a szerződési feltételeket.<mat-slide-toggle [(ngModel)]="isAccepted" name="acceptTerms"></mat-slide-toggle></p>
+                <p>Elfogadom a szerződési feltételeket. <mat-slide-toggle [(ngModel)]="isAccepted" name="acceptTerms"></mat-slide-toggle></p>
                 <button mat-fab extended type="submit" style="width: 100%;">
                     <mat-icon>check_circle</mat-icon>
                     Foglalás

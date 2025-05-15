@@ -67,30 +67,38 @@ export class LoginComponent implements OnInit, OnDestroy{
   
   password=new FormControl('');
   loginError:String="";
-  login() {
-    //console.log("belepett");
-    const emailValue=this.email.value || "";
-    const passwordValue=this.password.value || "";
-    /*
-    if (this.email.value==="test@test.com" && this.password.value === "test") {
-      localStorage.setItem("isLoggedIn","true");
-      window.location.href='/fooldal';
-    } else {
-      this.loginError="Hibás email vagy jelszó!";
-    }
-    */
-    this.authService.signIn(emailValue,passwordValue).then(userCredential =>{
-      console.log(userCredential)
-      this.authService.updateLoginStatus(true);
-      window.location.href='/fooldal';
-    }).catch(error=>{
-      switch(error.code) {
-        case 'auth/user-not-found': this.loginError="Nincs ilyen felhasználó!"; break;
-        case 'auth/wrong-password': this.loginError="Hibás jelszó!"; break;
-        case 'auth/invalid-credential': this.loginError="Hibás email vagy jelszó!"; break;
-        default: this.loginError="Sikertelen, később próbáld újra!"; break;
+  async login() {
+    const emailValue = this.email.value || "";
+    const passwordValue = this.password.value || "";
+
+    try {
+      await this.authService.signIn(emailValue, passwordValue);
+      const role = await this.authService.getRole();
+
+      if (role === 'admin') {
+        localStorage.setItem('isAdmin',"true");
       }
-    });
+
+      this.authService.updateLoginStatus(true);
+      
+      window.location.href = '/fooldal';
+
+    } catch (error: any) {
+      switch (error.code) {
+        case 'auth/user-not-found':
+          this.loginError = "Nincs ilyen felhasználó!";
+          break;
+        case 'auth/wrong-password':
+          this.loginError = "Hibás jelszó!";
+          break;
+        case 'auth/invalid-credential':
+          this.loginError = "Hibás email vagy jelszó!";
+          break;
+        default:
+          this.loginError = "Sikertelen, később próbáld újra!";
+          break;
+      }
+    }
   }
 
   ngOnDestroy(): void {

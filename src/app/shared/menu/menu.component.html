@@ -13,6 +13,12 @@
             <span matListItemTitle>Profil</span>
         </a>
     }
+    @if (isLoggedIn && isAdmin) {
+        <a mat-list-item routerLink="/admin" routerLinkActive="active-list-item" (click)="closeMenu()">
+            <mat-icon matListItemIcon>manage_accounts</mat-icon>
+            <span matListItemTitle>Admin</span>
+        </a>
+    }
     @if (isLoggedIn) {
         <a mat-list-item routerLinkActive="active-list-item" (click)="logout()">
             <mat-icon matListItemIcon>logout</mat-icon>

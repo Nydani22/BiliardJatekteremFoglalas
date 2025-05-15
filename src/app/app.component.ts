@@ -17,12 +17,20 @@ import { AuthService } from './shared/services/auth.service';
 export class AppComponent implements OnInit {
   title = 'BJI';
   isLoggedIn = false;
-
+  isAdmin=false;
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.authService.currentUser.subscribe(user => {
+    this.authService.currentUser.subscribe(async user => {
       this.isLoggedIn = !!user;
+
+      if (user) {
+        const role = await this.authService.getRole();
+        this.isAdmin = role === 'admin';
+        console.log(this.isAdmin);
+      } else {
+        this.isAdmin = false;
+      }
     });
   }
 

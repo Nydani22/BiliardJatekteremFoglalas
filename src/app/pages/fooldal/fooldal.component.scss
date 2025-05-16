@@ -53,6 +53,14 @@ h2 {
     bottom: 10px;
 }
 
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+
 
 @media (max-width: 768px) {
     .grid {

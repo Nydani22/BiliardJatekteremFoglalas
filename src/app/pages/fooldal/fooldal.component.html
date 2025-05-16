@@ -1,6 +1,12 @@
 <div id="fooldal">
     <h1>Főoldal</h1>
-    <div class="grid">
+    @if (loading) {
+        <div class="spinner-container">
+            <mat-spinner></mat-spinner>
+        </div>
+
+    } @else {
+        <div class="grid">
         @for (item of termek; track $index) {
             <div class="items" style="background-image: url({{item.terem_kep_url}});">
                 <div class="adatok">
@@ -20,4 +26,5 @@
             </div>
         }
     </div>
+    }
 </div>

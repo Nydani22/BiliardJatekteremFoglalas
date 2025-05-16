@@ -16,7 +16,6 @@ import { TeremService } from '../../shared/services/terem.service';
 })
 export class FooldalComponent implements OnInit {
   termek: Terem[] = [];
-  loading = true;
 
   constructor(private teremService: TeremService) {}
 
@@ -24,11 +23,9 @@ export class FooldalComponent implements OnInit {
     this.teremService.getAllTermek().subscribe({
       next: (data) => {
         this.termek = data;
-        this.loading = false;
       },
       error: (err) => {
         console.error('Hiba a termek lekérdezésekor:', err);
-        this.loading = false;
       }
     });
   }

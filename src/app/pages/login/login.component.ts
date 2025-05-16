@@ -75,14 +75,14 @@ export class LoginComponent implements OnInit, OnDestroy{
       await this.authService.signIn(emailValue, passwordValue);
       const role = await this.authService.getRole();
 
+
       if (role === 'admin') {
         localStorage.setItem('isAdmin',"true");
       }
 
-      this.authService.updateLoginStatus(true);
-      
-      window.location.href = '/fooldal';
+      await this.authService.updateLoginStatus(true);
 
+      window.location.href = '/fooldal';
     } catch (error: any) {
       switch (error.code) {
         case 'auth/user-not-found':

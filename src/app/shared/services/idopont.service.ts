@@ -14,6 +14,7 @@ import {
 } from '@angular/fire/firestore';
 import { catchError, from, Observable, of } from 'rxjs';
 import { Idopont } from '../model/idopontok';
+import { writeBatch } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,7 @@ export class IdopontService {
   constructor(private firestore: Firestore) {
     this.idopontCollection = collection(this.firestore, 'Idopontok');
   }
+
 
   getAllIdopontok(): Observable<Idopont[]> {
     return collectionData(this.idopontCollection, { idField: 'id' }) as Observable<Idopont[]>;
@@ -42,6 +44,17 @@ export class IdopontService {
     );
     return collectionData(q, { idField: 'id' }) as Observable<Idopont[]>;
   }
+
+  bulkCreateIdopontokBatch(idopontok: Omit<Idopont, 'id'>[]) {
+  const batch = writeBatch(this.firestore);
+
+  idopontok.forEach(idopont => {
+    const idopontRef = doc(collection(this.firestore, 'Idopontok'));
+    batch.set(idopontRef, idopont);
+  });
+
+  return batch.commit();
+}
 
 
 

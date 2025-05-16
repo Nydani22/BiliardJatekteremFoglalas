@@ -15,6 +15,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../shared/components/confirmdialog/confirmdialog.component'; 
 
 @Component({
   selector: 'app-admin',
@@ -26,6 +28,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatNativeDateModule,
     MatCardModule,
     MatListModule,
+    MatDialogModule,
     MatIconModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
@@ -59,7 +62,8 @@ export class AdminComponent implements OnInit {
   constructor(
     private idopontService: IdopontService,
     private teremService: TeremService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -74,9 +78,53 @@ export class AdminComponent implements OnInit {
 
   loadIdopontok(): void {
     this.idopontService.getAllIdopontok().subscribe(data => {
-      this.idopontok = data;
+      this.idopontok = data.sort((b, a) => {
+        const dateCompare = a.date.localeCompare(b.date);
+        if (dateCompare !== 0) return dateCompare;
+        const aStart = a.intervallum.split('-')[0];
+        const bStart = b.intervallum.split('-')[0];
+        return aStart.localeCompare(bStart);
+      });
     });
   }
+
+  feltoltEgeszNap() {
+    if (!this.ujIdopont.date || !this.ujIdopont.teremid) {
+      alert("Kérlek válassz ki egy termet és dátumot!");
+      return;
+    }
+
+    const dateStr = this.formatDate(this.ujIdopont.date);
+
+    const idopontok = [];
+    for (let ora = 8; ora < 22; ora++) {
+      const kezd = `${ora.toString().padStart(2, '0')}:00`;
+      const veg = `${(ora + 1).toString().padStart(2, '0')}:00`;
+      idopontok.push({
+        teremid: this.ujIdopont.teremid,
+        date: dateStr,
+        intervallum: `${kezd}-${veg}`,
+        available: true,
+      });
+    }
+
+    this.idopontService.bulkCreateIdopontokBatch(idopontok)
+      .then(() => {
+        this.loadIdopontok();
+        this.ujIdopont = {
+          teremid: '',
+          date: '',
+          intervallum: '',
+          available: true,
+        };
+      })
+      .catch(err => {
+        console.error("Nem sikerült az egész nap feltöltése", err);
+      });
+  }
+
+
+
 
   createIdopont(): void {
     if (!this.validateIdoIntervallum(this.kezdIdo, this.vegIdo)) {
@@ -141,7 +189,12 @@ export class AdminComponent implements OnInit {
 
 
 
-  deleteIdopont(id: string): void {
+  async deleteIdopont(id: string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { message: "Biztosan törölni szeretnéd ezt az időpontot?" }
+    });
+    const confirmed = await dialogRef.afterClosed().toPromise();
+    if (!confirmed) return;
     this.idopontService.deleteIdopont(id).then(() => {
       this.loadIdopontok();
     });
@@ -188,7 +241,12 @@ export class AdminComponent implements OnInit {
     this.editTeremData = {};
   }
 
-  deleteTerem(id: string): void {
+  async deleteTerem(id: string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { message: "Biztosan törölni szeretnéd ezt a termet?" }
+    });
+    const confirmed = await dialogRef.afterClosed().toPromise();
+    if (!confirmed) return;
     this.teremService.deleteTerem(id).then(() => {
       this.loadTermek();
     });

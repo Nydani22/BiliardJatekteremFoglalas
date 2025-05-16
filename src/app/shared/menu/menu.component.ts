@@ -18,8 +18,8 @@ import { AuthService } from '../services/auth.service';
 export class MenuComponent implements OnInit, AfterViewInit {
 
   @Input() sidepanel!: MatSidenav;
-  @Input() isLoggedIn: boolean=false;
-  @Input() isAdmin: boolean=false;
+  @Input() isLoggedIn!: boolean;
+  @Input() isAdmin!: boolean;
   @Output() logoutEvent=new EventEmitter<void>();
 
 

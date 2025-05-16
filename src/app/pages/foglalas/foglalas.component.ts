@@ -71,14 +71,21 @@ export class FoglalasComponent implements OnInit {
   }
 
   loadIdopontok(teremId: string, date: Date) {
-    const dateString = this.formatDateToLocalString(date);
-    this.idopontService
-      .getIdopontokByTeremIdAndDate(teremId, dateString)
-      .subscribe((data) => {
-        this.idopontok = data.filter((ido) => ido.available);
-        this.cdr.markForCheck();
-      });
-  }
+  const dateString = this.formatDateToLocalString(date);
+  this.idopontService
+    .getIdopontokByTeremIdAndDate(teremId, dateString)
+    .subscribe((data) => {
+      this.idopontok = data
+        .filter((ido) => ido.available)
+        .sort((a, b) => {
+          const startA = a.intervallum.split('-')[0];
+          const startB = b.intervallum.split('-')[0];
+          return startA.localeCompare(startB);
+        });
+      this.cdr.markForCheck();
+    });
+}
+
 
   formatDateToLocalString(date: Date): string {
     const year = date.getFullYear();

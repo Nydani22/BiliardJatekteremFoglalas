@@ -1,0 +1,10 @@
+<div>
+<h2 mat-dialog-title>Megerősítés</h2>
+<mat-dialog-content>
+  <p>{{ data.message }}</p>
+</mat-dialog-content>
+<mat-dialog-actions style="align-self: self-end;">
+  <button mat-button (click)="onCancel()">Mégse</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Törlés</button>
+</mat-dialog-actions>
+</div>

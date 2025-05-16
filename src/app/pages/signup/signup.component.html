@@ -55,10 +55,14 @@
                     </button>
                 </mat-form-field>
             </div>
-            @if (errorMessage()) {
-                <div style="color: red;">
-                   {{ errorMessage() }}
-                </div>
+            @if (usernameError()) {
+                <mat-error>{{ usernameError() }}</mat-error>
+            } @else if(emailError()) {
+                <mat-error>{{ emailError() }}</mat-error>
+            } @else if (passwordError()) {
+                <mat-error>{{ passwordError() }}</mat-error>
+            } @else if (password2Error()) {
+                <mat-error>{{ password2Error() }}</mat-error>
             }
             <div>
                 <p>Van már fiókod? Lépj be <span routerLink='/login' id="login">itt.</span></p>        

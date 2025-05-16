@@ -16,11 +16,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DatePipe } from '../../shared/pipes/date.pipe';
 import {MatCardModule} from '@angular/material/card';
 import { Foglalas } from '../../shared/model/foglalasok';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../shared/components/confirmdialog/confirmdialog.component'; 
+
 
 @Component({
   selector: 'app-profil',
   templateUrl: './profil.component.html',
-  imports: [MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, DatePipe, MatCardModule],
+  imports: [MatFormFieldModule, MatDialogModule, MatInputModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, DatePipe, MatCardModule],
   styleUrls: ['./profil.component.scss'],
 })
 export class ProfilComponent implements OnInit, OnDestroy {
@@ -38,6 +41,7 @@ export class ProfilComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private teremService: TeremService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -105,7 +109,15 @@ export class ProfilComponent implements OnInit, OnDestroy {
   }
 
   async deleteProfil() {
-    if (!this.user || !confirm("Biztosan törölni szeretnéd a fiókodat?")) return;
+    if (!this.user) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { message: "Biztosan törölni szeretnéd a fiókodat?" }
+    });
+
+    const confirmed = await dialogRef.afterClosed().toPromise();
+    if (!confirmed) return;
+
     try {
       await this.userService.deleteUserProfil(this.user.id);
       await this.authService.deleteCurrentUser();
@@ -113,13 +125,18 @@ export class ProfilComponent implements OnInit, OnDestroy {
       console.error("Törlési hiba:", err);
     }
   }
+
   
   getFoglalasIdByIdopont(idopontId: string): string | undefined {
     return this.foglalasok.find(f => f.idopontid === idopontId)?.id;
   }
 
   async deleteFoglalas(id: string, idoid: string) {
-    if (!confirm("Biztosan törölni szeretnéd ezt a foglalást?")) return;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { message: "Biztosan törölni szeretnéd ezt a foglalást?" }
+    });
+    const confirmed = await dialogRef.afterClosed().toPromise();
+    if (!confirmed) return;
     try {
       console.log("halo");
       await this.foglalasokService.deleteFoglalas(id);

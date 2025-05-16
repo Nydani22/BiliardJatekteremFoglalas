@@ -38,9 +38,11 @@ mat-form-field {
   margin-bottom: 1rem;
 }
 .ido-row {
+  
   display: flex;
   align-items: center;
   gap: 24px;
+
 
   p {
     margin: 0;
@@ -52,3 +54,12 @@ mat-form-field {
   }
 }
 
+@media (max-width: 768px) {
+    #box {
+        width: 350px;
+    }
+    .ido-row {
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+}

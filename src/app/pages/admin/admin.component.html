@@ -56,7 +56,7 @@
       <button mat-raised-button color="primary" type="submit" [disabled]="!idopontForm.valid">Hozzáadás</button>
     </form>
 
-    <mat-list style="overflow-x: auto; max-height: 200px;">
+    <mat-list style="overflow: auto; max-height: 200px;">
     <mat-list-item *ngFor="let idopont of idopontok">
         {{ idopont.date }} - {{ idopont.intervallum }} ({{ getTeremNev(idopont.teremid) }})
         <button mat-icon-button color="warn" (click)="deleteIdopont(idopont.id)">
@@ -102,7 +102,7 @@
       <button mat-raised-button color="primary" type="submit" [disabled]="!teremForm.valid">Hozzáadás</button>
     </form>
 
-    <mat-list style="overflow-x: auto; max-height: 200px;">
+    <mat-list style="overflow: auto; max-height: 200px;">
       <mat-list-item *ngFor="let terem of termek">
         {{ terem.terem_nev }} - {{ terem.maximum_ferohely }} fő
         <button mat-icon-button color="warn" (click)="deleteTerem(terem.id)">

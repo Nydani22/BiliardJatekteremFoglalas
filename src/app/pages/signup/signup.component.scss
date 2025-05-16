@@ -25,3 +25,8 @@ mat-form-field {
     background-color: black;
 }
 
+@media (max-width: 768px) {
+    #box {
+        width: 350px;
+    }
+}

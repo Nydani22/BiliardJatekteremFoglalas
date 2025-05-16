@@ -34,6 +34,7 @@ h2 {
 .items {
     position: relative;
     text-align: center;
+    
     width: 500px;
     height: 250px;
     border-radius: 18px;
@@ -56,5 +57,8 @@ h2 {
 @media (max-width: 768px) {
     .grid {
         grid-template-columns: 1fr;
+    }
+    .items {
+        width: 380px;
     }
 }

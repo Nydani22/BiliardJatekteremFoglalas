@@ -145,6 +145,7 @@ export class ProfilComponent implements OnInit, OnDestroy {
       this.idopontok = this.idopontok.filter(i => {
         return !this.foglalasok.some(f => f.idopontid === i.id);
       });
+      this.loadProfil();
       this.snackBar.open("Sikeres törlés.", "Ok", { duration: 3000 });
     } catch (err) {
       console.error("Foglalás törlési hiba:", err);

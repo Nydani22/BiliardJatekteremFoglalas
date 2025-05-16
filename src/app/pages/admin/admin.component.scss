@@ -12,12 +12,17 @@
 }
 
 mat-card {
-    padding: 2rem;
-    max-width: 1000px;
-    min-width: 500px;
-    margin: 2rem;
+  padding: 2rem;
+  width: 500px;
+  margin: 2rem;
 }
 
 .mt-4 {
   margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    mat-card {
+        width: 380px;
+    }   
 }

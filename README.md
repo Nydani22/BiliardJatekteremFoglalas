@@ -1,5 +1,6 @@
 # Biliard játékterem időpontfoglaló
 publikus link: https://biliardip-e7351.web.app
+Admin user: admin@admin.com admin1234
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.6.
 

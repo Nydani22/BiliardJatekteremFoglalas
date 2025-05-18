@@ -5,6 +5,7 @@ import {
   collectionData,
   addDoc,
   doc,
+  getDocs,
   updateDoc,
   deleteDoc,
   query,
@@ -84,6 +85,20 @@ export class IdopontService {
   }
 
   deleteIdopont(id: string): Promise<void> {
-    return deleteDoc(doc(this.firestore, 'Idopontok', id));
-  }
+  const foglalasRef = collection(this.firestore, 'Foglalasok');
+  const q = query(foglalasRef, where('idopontid', '==', id));
+  return getDocs(q)
+    .then((querySnapshot) => {
+      const deletePromises: Promise<void>[] = [];
+      querySnapshot.forEach((docSnap) => {
+        const foglalasDocRef = doc(this.firestore, 'Foglalasok', docSnap.id);
+        deletePromises.push(deleteDoc(foglalasDocRef));
+      });
+      return Promise.all(deletePromises);
+    })
+    .then(() => {
+      const idopontRef = doc(this.firestore, 'Idopontok', id);
+      return deleteDoc(idopontRef);
+    });
+}
 }

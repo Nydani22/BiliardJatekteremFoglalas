@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { collection, doc, getDoc, deleteDoc, Firestore, updateDoc } from '@angular/fire/firestore';
+import { collection, doc, getDoc, getDocs,where,query, deleteDoc, Firestore, updateDoc } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import { from, Observable, switchMap, of } from 'rxjs';
 import { User } from '../model/users';
@@ -45,9 +45,17 @@ export class UserService {
     await updateDoc(userDocRef, data);
   }
 
-  async deleteUserProfil(userId: string): Promise<void> {
-    const userDocRef = doc(this.firestore, 'Users', userId);
-    await deleteDoc(userDocRef);
-    this.authService.signOut();
-  }
+  
+async deleteUserProfil(userId: string): Promise<void> {
+  const foglalasRef = collection(this.firestore, 'Foglalasok');
+  const q = query(foglalasRef, where('userid', '==', userId));
+  const querySnapshot = await getDocs(q);
+  const deletePromises = querySnapshot.docs.map((docSnap) =>
+    deleteDoc(doc(this.firestore, 'Foglalasok', docSnap.id))
+  );
+  await Promise.all(deletePromises);
+  const userDocRef = doc(this.firestore, 'Users', userId);
+  await deleteDoc(userDocRef);
+  this.authService.signOut();
+}
 }

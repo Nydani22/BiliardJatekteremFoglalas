@@ -14,7 +14,7 @@ import {
   CollectionReference,
   DocumentReference
 } from '@angular/fire/firestore';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Terem } from '../model/termek';
 
 
@@ -66,7 +66,34 @@ export class TeremService {
 
   
   deleteTerem(id: string): Promise<void> {
-    const docRef = doc(this.firestore, 'Termek', id);
-    return deleteDoc(docRef);
-  }
+  const idopontRef = collection(this.firestore, 'Idopontok');
+  const idopontQuery = query(idopontRef, where('teremid', '==', id));
+
+  return getDocs(idopontQuery).then((idopontSnapshot) => {
+    const allDeletes: Promise<void>[] = [];
+
+    idopontSnapshot.forEach((idopontDoc) => {
+      const idopontId = idopontDoc.id;
+      const foglalasRef = collection(this.firestore, 'Foglalasok');
+      const foglalasQuery = query(foglalasRef, where('idopontid', '==', idopontId));
+
+      const foglalasPromise = getDocs(foglalasQuery).then((foglalasSnapshot) => {
+        const foglalasDeletes: Promise<void>[] = [];
+        foglalasSnapshot.forEach((foglalasDoc) => {
+          foglalasDeletes.push(deleteDoc(doc(this.firestore, 'Foglalasok', foglalasDoc.id)));
+        });
+        return Promise.all(foglalasDeletes);
+      });
+      const idopontDeletePromise = foglalasPromise.then(() =>
+        deleteDoc(doc(this.firestore, 'Idopontok', idopontId))
+      );
+
+      allDeletes.push(idopontDeletePromise);
+    });
+
+    return Promise.all(allDeletes);
+  }).then(() => {
+    return deleteDoc(doc(this.firestore, 'Termek', id));
+  });
+}
 }

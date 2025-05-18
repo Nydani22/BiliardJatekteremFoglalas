@@ -1,12 +1,12 @@
 # Biliard játékterem időpontfoglaló
+publikus link: https://biliardip-e7351.web.app
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.6.
 
-A bejelentkezés beégetett kóddal van megoldva, "test@test.com" email és "test" jelszó kombóval lehet bejelentkezni.
-VS code-ban is futattható
-indításhoz kell:
--npm install
--npm start
+VS code-ban futattható
+    indításhoz kell:
+    -npm install
+    -npm start
 
 ## Development server
 
